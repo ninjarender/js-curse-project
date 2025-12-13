@@ -1,0 +1,52 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg) var(--spacing-xl);
+
+  &__logo {
+    background-color: var(--color-block-light);
+  }
+
+  &__nav {
+    width: 265px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-dark);
+    padding: var(--spacing-sm);
+    border-radius: 24px;
+
+    &-link {
+      padding: 6px 12px;
+      color: var(--color-light);
+      font-size: 16px;
+      text-decoration: none;
+      font-weight: 400;
+    
+      &--active {
+        background-color: var(--color-light);
+        color: var(--color-dark);
+        border-radius: 16px;
+      }
+    }
+  }
+
+  &__socials {
+    display: flex;
+    gap: 12px;
+
+    &-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-block-light);
+      // border-radius: var(--radius-md);
+      // color: var(--color-dark);
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--color-dark);
+      border-radius: 8px;
+    }
+  }
+}

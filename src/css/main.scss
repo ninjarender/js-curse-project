@@ -1,0 +1,14 @@
+/* Main CSS file - imports all modules */
+@import 'modern-normalize/modern-normalize.css';
+
+@import './fonts.scss';
+@import './variables.scss';
+
+@import './common.scss';
+
+@import './header.scss';
+
+@import './home.scss';
+@import './exercises.scss';
+
+@import './footer.scss';
