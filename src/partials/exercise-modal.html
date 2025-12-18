@@ -1,0 +1,66 @@
+<div class="exercise-modal" id="js-exercise-modal">
+  <div class="exercise-modal__overlay"></div>
+  <div class="exercise-modal__content">
+    <button class="exercise-modal__close" id="js-exercise-modal-close" aria-label="Close modal">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </button>
+
+    <div class="exercise-modal__body">
+      <div class="exercise-modal__image">
+        <img id="js-exercise-modal-image" src="" alt="Exercise illustration" />
+      </div>
+
+      <div class="exercise-modal__info">
+        <h2 class="exercise-modal__title" id="js-exercise-modal-title"></h2>
+
+        <div class="exercise-modal__rating" id="js-exercise-modal-rating">
+          <span class="exercise-modal__rating-value"></span>
+          <div class="exercise-modal__rating-stars"></div>
+        </div>
+
+        <div class="exercise-modal__details">
+          <div class="exercise-modal__detail-item">
+            <span class="exercise-modal__detail-label">Target</span>
+            <span class="exercise-modal__detail-value" id="js-exercise-modal-target"></span>
+          </div>
+          <div class="exercise-modal__detail-item">
+            <span class="exercise-modal__detail-label">Body Part</span>
+            <span class="exercise-modal__detail-value" id="js-exercise-modal-body-part"></span>
+          </div>
+          <div class="exercise-modal__detail-item">
+            <span class="exercise-modal__detail-label">Equipment</span>
+            <span class="exercise-modal__detail-value" id="js-exercise-modal-equipment"></span>
+          </div>
+          <div class="exercise-modal__detail-item">
+            <span class="exercise-modal__detail-label">Popular</span>
+            <span class="exercise-modal__detail-value" id="js-exercise-modal-popular"></span>
+          </div>
+        </div>
+
+        <div class="exercise-modal__calories">
+          <span class="exercise-modal__calories-value" id="js-exercise-modal-calories"></span>
+          <span class="exercise-modal__calories-time" id="js-exercise-modal-time"></span>
+        </div>
+
+        <p class="exercise-modal__description" id="js-exercise-modal-description"></p>
+
+        <div class="exercise-modal__actions">
+          <button class="exercise-modal__btn exercise-modal__btn--favorites" id="js-exercise-modal-favorites">
+            <span>Add to favorites</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button class="exercise-modal__btn exercise-modal__btn--rating" id="js-exercise-modal-rating-btn">
+            Give a rating
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
