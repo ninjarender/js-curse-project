@@ -1,0 +1,323 @@
+import { openExerciseModal } from './exercise-modal.js';
+
+// Глобальні змінні для фільтра та сторінки
+let currentFilter = 'Muscles';
+let currentPage = 1;
+let currentCategory = null;
+
+// Функція для створення HTML картки категорії
+function createExerciseCard(exercise) {
+  return `
+    <div class="exercises__content__main__cards-item" data-category-name="${exercise.name}">
+      <div class="exercises__content__main__cards-item-image">
+        <img src="${exercise.imgURL}" alt="${exercise.name} exercise" />
+        <div class="exercises__content__main__cards-item-overlay">
+          <div class="exercises__content__main__cards-item-overlay-name">${exercise.name}</div>
+          <div class="exercises__content__main__cards-item-overlay-category">${exercise.filter}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Функція для створення HTML картки вправи
+function createExerciseItemCard(exercise) {
+  const rating = exercise.rating || 0;
+  const burnedCalories = exercise.burnedCalories || 0;
+  const time = exercise.time || 0;
+  const bodyPart = exercise.bodyPart || '';
+  const target = exercise.target || '';
+  const exerciseId = exercise._id || '';
+
+  return `
+    <div class="exercises__content__main__cards-item exercises__content__main__cards-item--exercise" data-exercise-id="${exerciseId}">
+      <div class="exercises__content__main__cards-item-header">
+        <button class="exercises__content__main__cards-item-workout-btn">WORKOUT</button>
+        <div class="exercises__content__main__cards-item-rating">
+          <span class="exercises__content__main__cards-item-rating-value">${rating.toFixed(
+            1
+          )}</span>
+          <svg class="exercises__content__main__cards-item-rating-star" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 0L11.0206 6.21885L17.5595 6.21885L12.2694 10.0623L14.2901 16.2812L9 12.4377L3.70993 16.2812L5.73056 10.0623L0.440492 6.21885L6.97937 6.21885L9 0Z" fill="#EEA10C"/>
+          </svg>
+        </div>
+        <button class="exercises__content__main__cards-item-start-btn">
+          Start
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.75 4.5L11.25 9L6.75 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="exercises__content__main__cards-item-body">
+        <div class="exercises__content__main__cards-item-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3 class="exercises__content__main__cards-item-title">${
+          exercise.name
+        }</h3>
+      </div>
+      <div class="exercises__content__main__cards-item-footer">
+        <div class="exercises__content__main__cards-item-info">
+          <span class="exercises__content__main__cards-item-info-label">Burned calories:</span>
+          <span class="exercises__content__main__cards-item-info-value">${burnedCalories}</span>
+          <span class="exercises__content__main__cards-item-info-label">/ ${time} min</span>
+        </div>
+        <div class="exercises__content__main__cards-item-info">
+          <span class="exercises__content__main__cards-item-info-label">Body part:</span>
+          <span class="exercises__content__main__cards-item-info-value">${bodyPart}</span>
+        </div>
+        <div class="exercises__content__main__cards-item-info">
+          <span class="exercises__content__main__cards-item-info-label">Target:</span>
+          <span class="exercises__content__main__cards-item-info-value">${target}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Функція для рендерингу карток категорій
+function renderExerciseCards(exercises) {
+  const cardsContainer = document.querySelector(
+    '.exercises__content__main__cards'
+  );
+
+  if (!cardsContainer) {
+    console.warn('Cards container not found');
+    return;
+  }
+
+  // Видаляємо клас для карток вправ (якщо був)
+  cardsContainer.classList.remove('exercises__content__main__cards--exercises');
+
+  // Очищаємо контейнер
+  cardsContainer.innerHTML = '';
+
+  // Рендеримо кожну картку
+  exercises.forEach(exercise => {
+    const cardHTML = createExerciseCard(exercise);
+    cardsContainer.insertAdjacentHTML('beforeend', cardHTML);
+  });
+
+  // Додаємо обробники кліків на картки категорій
+  const categoryCards = cardsContainer.querySelectorAll(
+    '.exercises__content__main__cards-item'
+  );
+  categoryCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const categoryName = card.getAttribute('data-category-name');
+      if (categoryName) {
+        loadExercisesByCategory(categoryName);
+      }
+    });
+  });
+}
+
+// Функція для рендерингу карток вправ
+function renderExerciseItemCards(exercises) {
+  const cardsContainer = document.querySelector(
+    '.exercises__content__main__cards'
+  );
+
+  if (!cardsContainer) {
+    console.warn('Cards container not found');
+    return;
+  }
+
+  // Додаємо клас для карток вправ
+  cardsContainer.classList.add('exercises__content__main__cards--exercises');
+
+  // Очищаємо контейнер
+  cardsContainer.innerHTML = '';
+
+  // Рендеримо кожну картку
+  exercises.forEach(exercise => {
+    const cardHTML = createExerciseItemCard(exercise);
+    cardsContainer.insertAdjacentHTML('beforeend', cardHTML);
+  });
+
+  // Додаємо обробники кліків на картки вправ для відкриття модального вікна
+  const exerciseCards = cardsContainer.querySelectorAll(
+    '.exercises__content__main__cards-item--exercise'
+  );
+  exerciseCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const exerciseId = card.getAttribute('data-exercise-id');
+      if (exerciseId) {
+        openExerciseModal(exerciseId);
+      }
+    });
+  });
+}
+
+// Функція для оновлення breadcrumbs
+export function updateBreadcrumbs(categoryName = null) {
+  const breadcrumbsContainer = document.getElementById(
+    'js-exercises-breadcrumbs'
+  );
+
+  if (!breadcrumbsContainer) {
+    return;
+  }
+
+  breadcrumbsContainer.innerHTML = '';
+
+  // Завжди додаємо "Exercises"
+  const exercisesBtn = document.createElement('button');
+  exercisesBtn.className = 'exercises__content__header-breadcrumbs-item';
+  exercisesBtn.textContent = 'Exercises';
+  exercisesBtn.setAttribute('data-breadcrumb', 'exercises');
+
+  if (!categoryName) {
+    exercisesBtn.classList.add(
+      'exercises__content__header-breadcrumbs-item--active'
+    );
+  }
+
+  exercisesBtn.addEventListener('click', () => {
+    currentCategory = null;
+    currentPage = 1;
+    loadExerciseCards(currentFilter, currentPage);
+  });
+
+  breadcrumbsContainer.appendChild(exercisesBtn);
+
+  // Якщо є категорія, додаємо її
+  if (categoryName) {
+    const separator = document.createElement('span');
+    separator.className = 'exercises__content__header-breadcrumbs-separator';
+    separator.textContent = '/';
+    breadcrumbsContainer.appendChild(separator);
+
+    const categoryBtn = document.createElement('button');
+    categoryBtn.className =
+      'exercises__content__header-breadcrumbs-item exercises__content__header-breadcrumbs-item--active';
+    categoryBtn.textContent = categoryName;
+    breadcrumbsContainer.appendChild(categoryBtn);
+  }
+}
+
+// Функція для рендерингу пагінації
+function renderPagination(totalPages, page = 1) {
+  const paginationContainer = document.querySelector(
+    '.exercises__content__pagination'
+  );
+
+  if (!paginationContainer) {
+    console.warn('Pagination container not found');
+    return;
+  }
+
+  // Очищаємо контейнер
+  paginationContainer.innerHTML = '';
+
+  // Створюємо кнопки для кожної сторінки
+  for (let i = 1; i <= totalPages; i++) {
+    const pageButton = document.createElement('button');
+    pageButton.className = 'exercises__content__pagination-page';
+    pageButton.textContent = i;
+
+    if (i === page) {
+      pageButton.classList.add('exercises__content__pagination-page--active');
+    }
+
+    // Додаємо обробник кліку
+    pageButton.addEventListener('click', () => {
+      currentPage = i;
+      if (currentCategory) {
+        loadExercisesByCategory(currentCategory, i);
+      } else {
+        loadExerciseCards(currentFilter, i);
+      }
+    });
+
+    paginationContainer.appendChild(pageButton);
+  }
+}
+
+// Функція для завантаження карток категорій
+export function loadExerciseCards(filter, page = 1) {
+  currentFilter = filter;
+  currentPage = page;
+
+  // Кодуємо параметри для безпечного передавання в URL
+  const encodedFilter = encodeURIComponent(filter);
+  const url = `https://your-energy.b.goit.study/api/filters?filter=${encodedFilter}&page=${page}`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      // Припускаємо, що API повертає масив exercises або об'єкт з полем results/exercises
+      const exercises = data.results || data.exercises || data || [];
+
+      // Отримуємо загальну кількість сторінок
+      const totalPages =
+        data.totalPages || data.total_pages || data.pageCount || 1;
+
+      if (Array.isArray(exercises) && exercises.length > 0) {
+        currentCategory = null; // Скидаємо поточну категорію
+        updateBreadcrumbs(null);
+        renderExerciseCards(exercises);
+        renderPagination(totalPages, page);
+      } else {
+        console.warn('No exercises data received');
+        updateBreadcrumbs(null);
+        renderPagination(1, 1);
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching filters:', error);
+    });
+}
+
+// Функція для завантаження вправ за категорією
+export function loadExercisesByCategory(categoryName, page = 1) {
+  currentCategory = categoryName;
+  currentPage = page;
+
+  // Визначаємо параметр залежно від типу фільтра
+  let paramName = '';
+  if (currentFilter === 'Muscles') {
+    paramName = 'muscles';
+  } else if (currentFilter === 'Body parts') {
+    paramName = 'bodyPart';
+  } else if (currentFilter === 'Equipment') {
+    paramName = 'equipment';
+  }
+
+  // Кодуємо параметри для безпечного передавання в URL
+  const encodedCategory = encodeURIComponent(categoryName);
+  const url = `https://your-energy.b.goit.study/api/exercises?${paramName}=${encodedCategory}&page=${page}&limit=10`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      // Отримуємо масив вправ
+      const exercises = data.results || [];
+
+      // Отримуємо загальну кількість сторінок
+      const totalPages = data.totalPages || 1;
+
+      if (Array.isArray(exercises) && exercises.length > 0) {
+        updateBreadcrumbs(categoryName);
+        renderExerciseItemCards(exercises);
+        renderPagination(totalPages, page);
+      } else {
+        console.warn('No exercises data received');
+        updateBreadcrumbs(categoryName);
+        const cardsContainer = document.querySelector(
+          '.exercises__content__main__cards'
+        );
+        if (cardsContainer) {
+          cardsContainer.innerHTML = '';
+        }
+        renderPagination(1, 1);
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching exercises:', error);
+    });
+}
