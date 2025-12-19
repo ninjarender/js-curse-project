@@ -32,6 +32,34 @@ fetch('https://your-energy.b.goit.study/api/quote')
     console.error('Error fetching quote:', error);
   });
 
+// Функція для відправки запиту на оформлення підписки
+async function subscribeToNewsletter(email) {
+  try {
+    const response = await fetch(
+      'https://your-energy.b.goit.study/api/subscription',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to subscribe');
+    }
+
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error) {
+    console.error('Error subscribing to newsletter:', error);
+    return { success: false, error: error.message };
+  }
+}
+
 // Початкове завантаження та ініціалізація
 document.addEventListener('DOMContentLoaded', () => {
   // Ініціалізація модалок
@@ -72,4 +100,31 @@ document.addEventListener('DOMContentLoaded', () => {
       loadExerciseCards(filter, 1);
     });
   });
+
+  // Обробка форми підписки
+  const subscribeForm = document.getElementById('subscribeForm');
+  if (subscribeForm) {
+    subscribeForm.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const emailInput = subscribeForm.querySelector(
+        '.footer__subscribe-form-input'
+      );
+      const email = emailInput?.value.trim() || '';
+
+      if (!email) {
+        alert('Please enter your email address');
+        return;
+      }
+
+      const result = await subscribeToNewsletter(email);
+
+      if (result.success) {
+        alert(result.data.message);
+        subscribeForm.reset();
+      } else {
+        alert('Failed to subscribe. Please try again later.');
+      }
+    });
+  }
 });
