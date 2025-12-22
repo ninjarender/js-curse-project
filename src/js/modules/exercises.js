@@ -4,6 +4,28 @@ import { openExerciseModal } from './exercise-modal.js';
 let currentFilter = 'Muscles';
 let currentPage = 1;
 let currentCategory = null;
+let currentSearchKeyword = '';
+
+// Функція для показу поля пошуку
+function showSearchField() {
+  const searchField = document.getElementById('js-exercises-search');
+  if (searchField) {
+    searchField.style.display = 'flex';
+  }
+}
+
+// Функція для приховування поля пошуку
+function hideSearchField() {
+  const searchField = document.getElementById('js-exercises-search');
+  const searchInput = document.getElementById('js-exercises-search-input');
+  if (searchField) {
+    searchField.style.display = 'none';
+  }
+  if (searchInput) {
+    searchInput.value = '';
+  }
+  currentSearchKeyword = '';
+}
 
 // Функція для створення HTML картки категорії
 function createExerciseCard(exercise) {
@@ -153,6 +175,35 @@ function renderExerciseItemCards(exercises) {
   });
 }
 
+// Функція для відображення empty state
+function renderEmptyState() {
+  const cardsContainer = document.querySelector(
+    '.exercises__content__main__cards'
+  );
+
+  if (!cardsContainer) {
+    console.warn('Cards container not found');
+    return;
+  }
+
+  // Додаємо клас для карток вправ
+  cardsContainer.classList.add('exercises__content__main__cards--exercises');
+
+  // Очищаємо контейнер
+  cardsContainer.innerHTML = '';
+
+  // Додаємо empty state
+  const emptyStateHTML = `
+    <div class="exercises__content__main__empty-state">
+      <p class="exercises__content__main__empty-state-text">
+        Unfortunately, no results were found. You may want to consider other search options.
+      </p>
+    </div>
+  `;
+
+  cardsContainer.insertAdjacentHTML('beforeend', emptyStateHTML);
+}
+
 // Функція для оновлення breadcrumbs
 export function updateBreadcrumbs(categoryName = null) {
   const breadcrumbsContainer = document.getElementById(
@@ -243,6 +294,9 @@ export function loadExerciseCards(filter, page = 1) {
   currentFilter = filter;
   currentPage = page;
 
+  // Приховуємо поле пошуку при переході до списку категорій
+  hideSearchField();
+
   // Кодуємо параметри для безпечного передавання в URL
   const encodedFilter = encodeURIComponent(filter);
   const url = `https://your-energy.b.goit.study/api/filters?filter=${encodedFilter}&page=${page}`;
@@ -274,9 +328,17 @@ export function loadExerciseCards(filter, page = 1) {
 }
 
 // Функція для завантаження вправ за категорією
-export function loadExercisesByCategory(categoryName, page = 1) {
+export function loadExercisesByCategory(
+  categoryName,
+  page = 1,
+  keyword = currentSearchKeyword
+) {
   currentCategory = categoryName;
   currentPage = page;
+  currentSearchKeyword = keyword;
+
+  // Показуємо поле пошуку
+  showSearchField();
 
   // Визначаємо параметр залежно від типу фільтра
   let paramName = '';
@@ -290,7 +352,13 @@ export function loadExercisesByCategory(categoryName, page = 1) {
 
   // Кодуємо параметри для безпечного передавання в URL
   const encodedCategory = encodeURIComponent(categoryName);
-  const url = `https://your-energy.b.goit.study/api/exercises?${paramName}=${encodedCategory}&page=${page}&limit=10`;
+  let url = `https://your-energy.b.goit.study/api/exercises?${paramName}=${encodedCategory}&page=${page}&limit=10`;
+
+  // Додаємо параметр пошуку якщо він є
+  if (keyword && keyword.trim() !== '') {
+    const encodedKeyword = encodeURIComponent(keyword.trim());
+    url += `&keyword=${encodedKeyword}`;
+  }
 
   fetch(url)
     .then(response => response.json())
@@ -301,23 +369,51 @@ export function loadExercisesByCategory(categoryName, page = 1) {
       // Отримуємо загальну кількість сторінок
       const totalPages = data.totalPages || 1;
 
+      updateBreadcrumbs(categoryName);
+
       if (Array.isArray(exercises) && exercises.length > 0) {
-        updateBreadcrumbs(categoryName);
         renderExerciseItemCards(exercises);
         renderPagination(totalPages, page);
       } else {
-        console.warn('No exercises data received');
-        updateBreadcrumbs(categoryName);
-        const cardsContainer = document.querySelector(
-          '.exercises__content__main__cards'
+        // Показуємо empty state
+        renderEmptyState();
+        // Приховуємо пагінацію
+        const paginationContainer = document.querySelector(
+          '.exercises__content__pagination'
         );
-        if (cardsContainer) {
-          cardsContainer.innerHTML = '';
+        if (paginationContainer) {
+          paginationContainer.innerHTML = '';
         }
-        renderPagination(1, 1);
       }
     })
     .catch(error => {
       console.error('Error fetching exercises:', error);
     });
+}
+
+// Функція для ініціалізації обробників пошуку
+export function initSearch() {
+  const searchInput = document.getElementById('js-exercises-search-input');
+
+  if (!searchInput) {
+    return;
+  }
+
+  let searchTimeout = null;
+
+  // Обробка введення тексту з затримкою 1 секунда
+  searchInput.addEventListener('input', () => {
+    // Очищаємо попередній таймер
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    // Встановлюємо новий таймер
+    searchTimeout = setTimeout(() => {
+      const keyword = searchInput.value.trim();
+      if (currentCategory) {
+        loadExercisesByCategory(currentCategory, 1, keyword);
+      }
+    }, 1000);
+  });
 }

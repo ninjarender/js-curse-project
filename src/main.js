@@ -1,6 +1,7 @@
 import {
   loadExerciseCards,
   updateBreadcrumbs,
+  initSearch,
 } from './js/modules/exercises.js';
 import {
   initExerciseModal,
@@ -65,6 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ініціалізація модалок
   initExerciseModal();
   initRatingModal();
+
+  // Ініціалізація пошуку
+  initSearch();
 
   // Початкове завантаження карток
   loadExerciseCards('Muscles', 1);

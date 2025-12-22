@@ -1,16 +1,12 @@
 /* Main CSS file - imports all modules */
+@use './fonts';
+@use './variables';
+@use './common';
+@use './header';
+@use './home';
+@use './exercises';
+@use './exercise-modal';
+@use './rating-modal';
+@use './footer';
+
 @import 'modern-normalize/modern-normalize.css';
-
-@import './fonts.scss';
-@import './variables.scss';
-
-@import './common.scss';
-
-@import './header.scss';
-
-@import './home.scss';
-@import './exercises.scss';
-@import './exercise-modal.scss';
-@import './rating-modal.scss';
-
-@import './footer.scss';
