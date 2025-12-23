@@ -11,6 +11,7 @@ import {
   initRatingModal,
   closeRatingModal,
 } from './js/modules/rating-modal.js';
+import { initHeader } from './js/modules/header.js';
 
 // Завантаження цитати
 fetch('https://your-energy.b.goit.study/api/quote')
@@ -66,6 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ініціалізація модалок
   initExerciseModal();
   initRatingModal();
+
+  // Ініціалізація хедера
+  initHeader();
 
   // Ініціалізація пошуку
   initSearch();

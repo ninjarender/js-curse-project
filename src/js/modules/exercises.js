@@ -1,10 +1,12 @@
 import { openExerciseModal } from './exercise-modal.js';
+import { getFavorites } from './favorites.js';
 
 // Глобальні змінні для фільтра та сторінки
 let currentFilter = 'Muscles';
 let currentPage = 1;
 let currentCategory = null;
 let currentSearchKeyword = '';
+let currentMode = 'home'; // 'home' або 'favorites'
 
 // Функція для показу поля пошуку
 function showSearchField() {
@@ -216,6 +218,17 @@ export function updateBreadcrumbs(categoryName = null) {
 
   breadcrumbsContainer.innerHTML = '';
 
+  // Якщо режим Favorites - показуємо тільки заголовок "Favorites"
+  if (currentMode === 'favorites') {
+    const favoritesTitle = document.createElement('button');
+    favoritesTitle.className =
+      'exercises__content__header-breadcrumbs-item exercises__content__header-breadcrumbs-item--active';
+    favoritesTitle.textContent = 'Favorites';
+    favoritesTitle.setAttribute('data-breadcrumb', 'favorites');
+    breadcrumbsContainer.appendChild(favoritesTitle);
+    return;
+  }
+
   // Завжди додаємо "Exercises"
   const exercisesBtn = document.createElement('button');
   exercisesBtn.className = 'exercises__content__header-breadcrumbs-item';
@@ -416,4 +429,133 @@ export function initSearch() {
       }
     }, 1000);
   });
+}
+
+// Функція для відображення empty state для favorites
+function renderFavoritesEmptyState() {
+  const cardsContainer = document.querySelector(
+    '.exercises__content__main__cards'
+  );
+
+  if (!cardsContainer) {
+    console.warn('Cards container not found');
+    return;
+  }
+
+  // Додаємо клас для карток вправ
+  cardsContainer.classList.add('exercises__content__main__cards--exercises');
+
+  // Очищаємо контейнер
+  cardsContainer.innerHTML = '';
+
+  // Додаємо empty state
+  const emptyStateHTML = `
+    <div class="exercises__content__main__empty-state">
+      <p class="exercises__content__main__empty-state-text">
+        It appears that you haven't added any exercises to your favorites yet. 
+        To get started, you can add exercises that you like to your favorites 
+        for easier access in the future.
+      </p>
+    </div>
+  `;
+
+  cardsContainer.insertAdjacentHTML('beforeend', emptyStateHTML);
+}
+
+// Функція для завантаження вправ з обраного
+export function loadFavoritesExercises() {
+  const favoriteIds = getFavorites();
+
+  // Оновлюємо breadcrumbs
+  updateBreadcrumbs(null);
+
+  // Приховуємо пагінацію
+  const paginationContainer = document.querySelector(
+    '.exercises__content__pagination'
+  );
+  if (paginationContainer) {
+    paginationContainer.innerHTML = '';
+  }
+
+  // Якщо немає обраних вправ
+  if (favoriteIds.length === 0) {
+    renderFavoritesEmptyState();
+    return;
+  }
+
+  // Завантажуємо деталі кожної вправи
+  const promises = favoriteIds.map(id =>
+    fetch(`https://your-energy.b.goit.study/api/exercises/${id}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch exercise');
+        }
+        return response.json();
+      })
+      .catch(error => {
+        console.error(`Error fetching exercise ${id}:`, error);
+        return null;
+      })
+  );
+
+  Promise.all(promises).then(exercises => {
+    // Фільтруємо null значення (вправи, які не вдалося завантажити)
+    const validExercises = exercises.filter(ex => ex !== null);
+
+    if (validExercises.length > 0) {
+      renderExerciseItemCards(validExercises);
+    } else {
+      renderFavoritesEmptyState();
+    }
+  });
+}
+
+// Функція для перемикання в режим Home
+export function switchToHome() {
+  currentMode = 'home';
+  currentCategory = null;
+  currentSearchKeyword = '';
+
+  // Показуємо фільтри
+  const filtersContainer = document.querySelector(
+    '.exercises__content__header-filters'
+  );
+  if (filtersContainer) {
+    filtersContainer.style.display = 'flex';
+  }
+
+  // Видаляємо клас favorites з контейнера
+  const contentContainer = document.querySelector('.exercises__content');
+  if (contentContainer) {
+    contentContainer.classList.remove('exercises__content--favorites');
+  }
+
+  // Завантажуємо стандартні картки
+  loadExerciseCards(currentFilter, 1);
+}
+
+// Функція для перемикання в режим Favorites
+export function switchToFavorites() {
+  currentMode = 'favorites';
+  currentCategory = null;
+  currentSearchKeyword = '';
+
+  // Приховуємо фільтри та пошук
+  const filtersContainer = document.querySelector(
+    '.exercises__content__header-filters'
+  );
+  if (filtersContainer) {
+    filtersContainer.style.display = 'none';
+  }
+
+  hideSearchField();
+
+  // Додаємо клас favorites до контейнера
+  const contentContainer = document.querySelector('.exercises__content');
+  if (contentContainer) {
+    contentContainer.classList.add('exercises__content--favorites');
+  }
+
+  // Завантажуємо обрані вправи
+  loadFavoritesExercises();
 }

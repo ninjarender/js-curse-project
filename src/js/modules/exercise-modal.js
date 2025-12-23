@@ -1,4 +1,10 @@
 import { openRatingModal } from './rating-modal.js';
+import {
+  isFavorite,
+  toggleFavorite,
+} from './favorites.js';
+import { getCurrentPage } from './header.js';
+import { loadFavoritesExercises } from './exercises.js';
 
 // Змінна для зберігання ID вправи для рейтингу
 let currentExerciseIdForRating = null;
@@ -94,6 +100,9 @@ export function openExerciseModal(exerciseId) {
         });
       }
 
+      // Оновлюємо стан кнопки Favorites
+      updateFavoriteButton(exerciseId);
+
       // Підключення кнопки "Give a rating"
       const ratingBtn = document.getElementById('js-exercise-modal-rating-btn');
       if (ratingBtn) {
@@ -116,6 +125,34 @@ export function openExerciseModal(exerciseId) {
     });
 }
 
+// Функція для оновлення стану кнопки Favorites
+function updateFavoriteButton(exerciseId) {
+  const favoriteBtn = document.getElementById('js-exercise-modal-favorites');
+  if (!favoriteBtn) return;
+
+  const isInFavorites = isFavorite(exerciseId);
+  const btnText = favoriteBtn.querySelector('span');
+  const btnIcon = favoriteBtn.querySelector('svg path');
+
+  if (isInFavorites) {
+    favoriteBtn.classList.add('active');
+    if (btnText) btnText.textContent = 'Remove from favorites';
+    if (btnIcon) {
+      btnIcon.setAttribute('fill', 'currentColor');
+      btnIcon.removeAttribute('stroke');
+      btnIcon.removeAttribute('stroke-width');
+    }
+  } else {
+    favoriteBtn.classList.remove('active');
+    if (btnText) btnText.textContent = 'Add to favorites';
+    if (btnIcon) {
+      btnIcon.setAttribute('fill', 'none');
+      btnIcon.setAttribute('stroke', 'currentColor');
+      btnIcon.setAttribute('stroke-width', '2');
+    }
+  }
+}
+
 // Експорт функції закриття для використання в інших модулях
 export { closeExerciseModal };
 
@@ -132,6 +169,24 @@ export function initExerciseModal() {
 
   if (modalOverlay) {
     modalOverlay.addEventListener('click', closeExerciseModal);
+  }
+
+  // Обробник для кнопки Favorites
+  const favoriteBtn = document.getElementById('js-exercise-modal-favorites');
+  if (favoriteBtn) {
+    favoriteBtn.addEventListener('click', () => {
+      const exerciseId = currentExerciseIdForRating;
+      if (!exerciseId) return;
+
+      const wasAdded = toggleFavorite(exerciseId);
+      updateFavoriteButton(exerciseId);
+
+      // Якщо користувач на сторінці Favorites і видаляє вправу
+      if (!wasAdded && getCurrentPage() === 'favorites') {
+        closeExerciseModal();
+        loadFavoritesExercises();
+      }
+    });
   }
 }
 

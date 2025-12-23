@@ -1,6 +1,15 @@
 .exercises__content {
   margin-bottom: var(--spacing-3xl);
 
+  &--favorites {
+    .exercises__content__header-filters {
+      display: none;
+    }
+    .exercises__content__header-search {
+      display: none;
+    }
+  }
+
   &__header {
     display: flex;
     justify-content: space-between;
@@ -197,6 +206,10 @@
     }
 
     &__cards {
+      &-container {
+        width: 100%;
+      }
+
       width: 100%;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -396,6 +409,7 @@
 
     &__empty-state {
       width: 100%;
+      grid-column: 1 / -1;
       display: flex;
       align-items: center;
       justify-content: center;

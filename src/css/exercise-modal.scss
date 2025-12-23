@@ -238,6 +238,13 @@
         width: 24px;
         height: 24px;
       }
+
+      &.active {
+        svg path {
+          fill: currentColor;
+          stroke: none;
+        }
+      }
     }
 
     &--rating {
