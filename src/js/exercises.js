@@ -29,6 +29,42 @@ function hideSearchField() {
   currentSearchKeyword = '';
 }
 
+// Функція для ініціалізації слухача подій на контейнері карток (event delegation)
+export function initCardsEventListener() {
+  const cardsContainer = document.querySelector(
+    '.exercises__content__main__cards'
+  );
+
+  if (!cardsContainer) {
+    console.warn('Cards container not found for event delegation');
+    return;
+  }
+
+  // Один слухач на весь контейнер замість багатьох на кожній картці
+  cardsContainer.addEventListener('click', event => {
+    // Знаходимо найближчу картку від місця кліку
+    const card = event.target.closest('.exercises__content__main__cards-item');
+
+    if (!card) {
+      return;
+    }
+
+    // Перевіряємо, чи це картка категорії
+    const categoryName = card.getAttribute('data-category-name');
+    if (categoryName) {
+      loadExercisesByCategory(categoryName);
+      return;
+    }
+
+    // Перевіряємо, чи це картка вправи
+    const exerciseId = card.getAttribute('data-exercise-id');
+    if (exerciseId) {
+      openExerciseModal(exerciseId);
+      return;
+    }
+  });
+}
+
 // Функція для створення HTML картки категорії
 function createExerciseCard(exercise) {
   return `
@@ -125,19 +161,6 @@ function renderExerciseCards(exercises) {
     const cardHTML = createExerciseCard(exercise);
     cardsContainer.insertAdjacentHTML('beforeend', cardHTML);
   });
-
-  // Додаємо обробники кліків на картки категорій
-  const categoryCards = cardsContainer.querySelectorAll(
-    '.exercises__content__main__cards-item'
-  );
-  categoryCards.forEach(card => {
-    card.addEventListener('click', () => {
-      const categoryName = card.getAttribute('data-category-name');
-      if (categoryName) {
-        loadExercisesByCategory(categoryName);
-      }
-    });
-  });
 }
 
 // Функція для рендерингу карток вправ
@@ -161,19 +184,6 @@ function renderExerciseItemCards(exercises) {
   exercises.forEach(exercise => {
     const cardHTML = createExerciseItemCard(exercise);
     cardsContainer.insertAdjacentHTML('beforeend', cardHTML);
-  });
-
-  // Додаємо обробники кліків на картки вправ для відкриття модального вікна
-  const exerciseCards = cardsContainer.querySelectorAll(
-    '.exercises__content__main__cards-item--exercise'
-  );
-  exerciseCards.forEach(card => {
-    card.addEventListener('click', () => {
-      const exerciseId = card.getAttribute('data-exercise-id');
-      if (exerciseId) {
-        openExerciseModal(exerciseId);
-      }
-    });
   });
 }
 

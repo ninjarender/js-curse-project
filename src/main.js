@@ -2,6 +2,7 @@ import {
   loadExerciseCards,
   updateBreadcrumbs,
   initSearch,
+  initCardsEventListener,
 } from './js/exercises.js';
 import { initExerciseModal, closeExerciseModal } from './js/exercise-modal.js';
 import { initRatingModal, closeRatingModal } from './js/rating-modal.js';
@@ -50,6 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ініціалізація пошуку
   initSearch();
+
+  // Ініціалізація слухача подій на контейнері карток (event delegation)
+  initCardsEventListener();
 
   // Початкове завантаження карток
   loadExerciseCards('Muscles', 1);
