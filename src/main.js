@@ -2,37 +2,14 @@ import {
   loadExerciseCards,
   updateBreadcrumbs,
   initSearch,
-} from './js/modules/exercises.js';
-import {
-  initExerciseModal,
-  closeExerciseModal,
-} from './js/modules/exercise-modal.js';
-import {
-  initRatingModal,
-  closeRatingModal,
-} from './js/modules/rating-modal.js';
-import { initHeader } from './js/modules/header.js';
+} from './js/exercises.js';
+import { initExerciseModal, closeExerciseModal } from './js/exercise-modal.js';
+import { initRatingModal, closeRatingModal } from './js/rating-modal.js';
+import { initHeader } from './js/header.js';
+import { displayQuote } from './js/quote.js';
 
-// Завантаження цитати
-fetch('https://your-energy.b.goit.study/api/quote')
-  .then(response => response.json())
-  .then(data => {
-    const quoteTextElement = document.getElementById('js-exercises-quote-text');
-    const quoteAuthorElement = document.getElementById(
-      'js-exercises-quote-author'
-    );
-
-    if (quoteTextElement) {
-      quoteTextElement.textContent = data.quote;
-    }
-
-    if (quoteAuthorElement) {
-      quoteAuthorElement.textContent = data.author;
-    }
-  })
-  .catch(error => {
-    console.error('Error fetching quote:', error);
-  });
+// Load and display quote of the day
+displayQuote();
 
 // Функція для відправки запиту на оформлення підписки
 async function subscribeToNewsletter(email) {
