@@ -36,7 +36,6 @@ export function initCardsEventListener() {
   );
 
   if (!cardsContainer) {
-    console.warn('Cards container not found for event delegation');
     return;
   }
 
@@ -146,7 +145,6 @@ function renderExerciseCards(exercises) {
   );
 
   if (!cardsContainer) {
-    console.warn('Cards container not found');
     return;
   }
 
@@ -170,7 +168,6 @@ function renderExerciseItemCards(exercises) {
   );
 
   if (!cardsContainer) {
-    console.warn('Cards container not found');
     return;
   }
 
@@ -194,7 +191,6 @@ function renderEmptyState() {
   );
 
   if (!cardsContainer) {
-    console.warn('Cards container not found');
     return;
   }
 
@@ -281,7 +277,6 @@ function renderPagination(totalPages, page = 1) {
   );
 
   if (!paginationContainer) {
-    console.warn('Pagination container not found');
     return;
   }
 
@@ -403,14 +398,10 @@ export function loadExerciseCards(filter, page = 1) {
         renderExerciseCards(exercises);
         renderPagination(totalPages, page);
       } else {
-        console.warn('No exercises data received');
         updateBreadcrumbs(null);
         renderPagination(1, 1);
       }
     })
-    .catch(error => {
-      console.error('Error fetching filters:', error);
-    });
 }
 
 // Функція для завантаження вправ за категорією
@@ -472,9 +463,6 @@ export function loadExercisesByCategory(
         }
       }
     })
-    .catch(error => {
-      console.error('Error fetching exercises:', error);
-    });
 }
 
 // Функція для ініціалізації обробників пошуку
@@ -511,7 +499,6 @@ function renderFavoritesEmptyState() {
   );
 
   if (!cardsContainer) {
-    console.warn('Cards container not found');
     return;
   }
 
@@ -566,7 +553,6 @@ export function loadFavoritesExercises() {
         return response.json();
       })
       .catch(error => {
-        console.error(`Error fetching exercise ${id}:`, error);
         return null;
       })
   );

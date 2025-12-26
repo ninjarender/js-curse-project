@@ -6,6 +6,15 @@ import {
 } from './js/exercises.js';
 import { initExerciseModal, closeExerciseModal } from './js/exercise-modal.js';
 import { initRatingModal, closeRatingModal } from './js/rating-modal.js';
+import {
+  initGlobalNotification,
+  showGlobalNotification,
+} from './js/global-notification.js';
+import {
+  showFieldError,
+  hideFieldError,
+  validateEmail,
+} from './js/form-validation.js';
 import { initHeader } from './js/header.js';
 import { displayQuote } from './js/quote.js';
 
@@ -35,7 +44,6 @@ async function subscribeToNewsletter(email) {
     const data = await response.json();
     return { success: true, data };
   } catch (error) {
-    console.error('Error subscribing to newsletter:', error);
     return { success: false, error: error.message };
   }
 }
@@ -45,6 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ініціалізація модалок
   initExerciseModal();
   initRatingModal();
+
+  // Ініціалізація глобальних повідомлень
+  initGlobalNotification();
 
   // Ініціалізація хедера
   initHeader();
@@ -92,27 +103,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Обробка форми підписки
   const subscribeForm = document.getElementById('subscribeForm');
+  const subscribeEmailInput = document.getElementById('subscribeEmail');
+  const subscribeEmailError = document.getElementById('subscribeEmailError');
+
+  // Clear error on input
+  if (subscribeEmailInput && subscribeEmailError) {
+    subscribeEmailInput.addEventListener('input', () => {
+      hideFieldError(subscribeEmailInput, subscribeEmailError);
+    });
+  }
+
   if (subscribeForm) {
     subscribeForm.addEventListener('submit', async e => {
       e.preventDefault();
 
-      const emailInput = subscribeForm.querySelector(
-        '.footer__subscribe-form-input'
-      );
-      const email = emailInput?.value.trim() || '';
+      const email = subscribeEmailInput?.value.trim() || '';
+      let hasErrors = false;
 
+      // Validate email
       if (!email) {
-        alert('Please enter your email address');
+        showFieldError(
+          subscribeEmailInput,
+          subscribeEmailError,
+          'Please enter your email address'
+        );
+        hasErrors = true;
+      } else if (!validateEmail(email)) {
+        showFieldError(
+          subscribeEmailInput,
+          subscribeEmailError,
+          'Please enter a valid email address'
+        );
+        hasErrors = true;
+      } else {
+        hideFieldError(subscribeEmailInput, subscribeEmailError);
+      }
+
+      // Stop if there are errors
+      if (hasErrors) {
         return;
       }
 
       const result = await subscribeToNewsletter(email);
 
       if (result.success) {
-        alert(result.data.message);
+        showGlobalNotification(result.data.message, 'success');
         subscribeForm.reset();
+        hideFieldError(subscribeEmailInput, subscribeEmailError);
       } else {
-        alert('Failed to subscribe. Please try again later.');
+        showGlobalNotification(result.error, 'error');
       }
     });
   }

@@ -7,7 +7,6 @@ export function getFavorites() {
     const favorites = localStorage.getItem(FAVORITES_KEY);
     return favorites ? JSON.parse(favorites) : [];
   } catch (error) {
-    console.error('Error reading favorites from LocalStorage:', error);
     return [];
   }
 }
@@ -23,7 +22,6 @@ export function addToFavorites(exerciseId) {
     }
     return false;
   } catch (error) {
-    console.error('Error adding to favorites:', error);
     return false;
   }
 }
@@ -36,7 +34,6 @@ export function removeFromFavorites(exerciseId) {
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(filteredFavorites));
     return true;
   } catch (error) {
-    console.error('Error removing from favorites:', error);
     return false;
   }
 }

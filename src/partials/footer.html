@@ -28,8 +28,12 @@
   <div class="footer__subscribe">
     <div class="footer__subscribe-title">Subscribe and learn about new exercises!</div>
     <form class="footer__subscribe-form" id="subscribeForm">
-      <input type="email" class="footer__subscribe-form-input" placeholder="Email" required aria-label="Email address">
-      <button type="submit" class="footer__subscribe-form-button">Send</button>
+      <div class="footer__subscribe-form-field">
+        <input type="email" class="footer__subscribe-form-input" id="subscribeEmail" placeholder="Email"
+          aria-label="Email address">
+        <div class="form-error" id="subscribeEmailError"></div>
+        <button type="submit" class="footer__subscribe-form-button">Send</button>
+      </div>
     </form>
     <div class="footer__year">©2023</div>
   </div>

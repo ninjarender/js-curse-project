@@ -117,7 +117,6 @@ export function openExerciseModal(exerciseId) {
       }
     })
     .catch(error => {
-      console.error('Error fetching exercise details:', error);
       if (title) title.textContent = 'Error loading exercise';
       if (description)
         description.textContent =

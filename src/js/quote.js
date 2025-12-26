@@ -36,8 +36,6 @@ async function loadQuoteOfTheDay() {
     // Return the quote data
     return { quote: data.quote, author: data.author };
   } catch (error) {
-    console.error('Error fetching quote:', error);
-
     // If fetch fails but we have cached data, use it
     if (cachedQuoteText && cachedQuoteAuthor) {
       return { quote: cachedQuoteText, author: cachedQuoteAuthor };

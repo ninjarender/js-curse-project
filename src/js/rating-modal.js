@@ -1,5 +1,46 @@
+import { showGlobalNotification } from './global-notification.js';
+import {
+  showFieldError,
+  hideFieldError,
+  validateEmail,
+} from './form-validation.js';
+
 // Змінна для зберігання ID вправи для рейтингу
 let currentExerciseIdForRating = null;
+
+// Helper functions for server messages
+function showServerMessage(message, type = 'error') {
+  const messageElement = document.getElementById('js-rating-server-message');
+  const messageTextElement = document.getElementById(
+    'js-rating-server-message-text'
+  );
+  if (!messageElement || !messageTextElement) return;
+
+  messageTextElement.textContent = message;
+  messageElement.classList.remove(
+    'rating-modal__server-message--error',
+    'rating-modal__server-message--success'
+  );
+  messageElement.classList.add(`rating-modal__server-message--${type}`);
+  messageElement.classList.add('rating-modal__server-message--visible');
+}
+
+function hideServerMessage() {
+  const messageElement = document.getElementById('js-rating-server-message');
+  const messageTextElement = document.getElementById(
+    'js-rating-server-message-text'
+  );
+  if (!messageElement) return;
+
+  messageElement.classList.remove('rating-modal__server-message--visible');
+  if (messageTextElement) {
+    messageTextElement.textContent = '';
+  }
+  messageElement.classList.remove(
+    'rating-modal__server-message--error',
+    'rating-modal__server-message--success'
+  );
+}
 
 // Функція для закриття модального вікна рейтингу
 function closeRatingModal() {
@@ -9,6 +50,18 @@ function closeRatingModal() {
   modal.classList.remove('rating-modal--open');
   document.body.style.overflow = '';
   currentExerciseIdForRating = null;
+
+  // Clear all errors when closing
+  const emailInput = document.getElementById('js-rating-modal-email');
+  const emailError = document.getElementById('js-email-error');
+  const commentTextarea = document.getElementById('js-rating-modal-comment');
+  const commentError = document.getElementById('js-comment-error');
+  const ratingError = document.getElementById('js-rating-error');
+
+  hideFieldError(emailInput, emailError);
+  hideFieldError(commentTextarea, commentError);
+  hideFieldError(null, ratingError);
+  hideServerMessage();
 }
 
 // Функція для відкриття модального вікна рейтингу
@@ -27,6 +80,15 @@ export function openRatingModal(exerciseId) {
 
   if (form) form.reset();
   if (ratingValue) ratingValue.textContent = '0.0';
+
+  // Clear all errors
+  const emailError = document.getElementById('js-email-error');
+  const commentError = document.getElementById('js-comment-error');
+  const ratingError = document.getElementById('js-rating-error');
+  hideFieldError(emailInput, emailError);
+  hideFieldError(commentTextarea, commentError);
+  hideFieldError(null, ratingError);
+  hideServerMessage();
 
   // Скидаємо активні зірки
   stars.forEach(star => {
@@ -64,6 +126,14 @@ export function initRatingModal() {
 
   if (ratingModalOverlay) {
     ratingModalOverlay.addEventListener('click', closeRatingModal);
+  }
+
+  // Обробник для закриття серверного повідомлення
+  const serverMessageCloseBtn = document.getElementById(
+    'js-rating-server-message-close'
+  );
+  if (serverMessageCloseBtn) {
+    serverMessageCloseBtn.addEventListener('click', hideServerMessage);
   }
 
   // Обробка зірок рейтингу
@@ -127,6 +197,34 @@ export function initRatingModal() {
     });
   });
 
+  // Add input event listeners to clear errors on input
+  const emailInput = document.getElementById('js-rating-modal-email');
+  const emailError = document.getElementById('js-email-error');
+  const commentTextarea = document.getElementById('js-rating-modal-comment');
+  const commentError = document.getElementById('js-comment-error');
+
+  if (emailInput && emailError) {
+    emailInput.addEventListener('input', () => {
+      hideFieldError(emailInput, emailError);
+    });
+  }
+
+  if (commentTextarea && commentError) {
+    commentTextarea.addEventListener('input', () => {
+      hideFieldError(commentTextarea, commentError);
+    });
+  }
+
+  // Clear rating error when selecting a star
+  ratingStars.forEach(star => {
+    star.addEventListener('click', () => {
+      const ratingError = document.getElementById('js-rating-error');
+      if (ratingError) {
+        hideFieldError(null, ratingError);
+      }
+    });
+  });
+
   // Обробка форми рейтингу
   const ratingForm = document.getElementById('js-rating-modal-form');
   if (ratingForm) {
@@ -135,7 +233,16 @@ export function initRatingModal() {
 
       const ratingStars = document.querySelectorAll('.rating-modal__star');
       const ratingValue = document.getElementById('js-rating-modal-value');
+      const emailInput = document.getElementById('js-rating-modal-email');
+      const commentTextarea = document.getElementById(
+        'js-rating-modal-comment'
+      );
+      const emailError = document.getElementById('js-email-error');
+      const commentError = document.getElementById('js-comment-error');
+      const ratingError = document.getElementById('js-rating-error');
+
       let selectedRating = 0;
+      let hasErrors = false;
 
       // Знаходимо вибраний рейтинг
       ratingStars.forEach((star, index) => {
@@ -144,26 +251,54 @@ export function initRatingModal() {
         }
       });
 
+      // Validate rating
       if (selectedRating === 0) {
-        alert('Please select a rating');
-        return;
+        showFieldError(null, ratingError, 'Please select a rating');
+        hasErrors = true;
+      } else {
+        hideFieldError(null, ratingError);
       }
-
-      const emailInput = document.getElementById('js-rating-modal-email');
-      const commentTextarea = document.getElementById(
-        'js-rating-modal-comment'
-      );
 
       const email = emailInput?.value.trim() || '';
       const review = commentTextarea?.value.trim() || '';
 
+      // Validate email
       if (!email) {
-        alert('Please enter your email');
+        showFieldError(emailInput, emailError, 'Please enter your email');
+        hasErrors = true;
+      } else if (!validateEmail(email)) {
+        showFieldError(
+          emailInput,
+          emailError,
+          'Please enter a valid email address'
+        );
+        hasErrors = true;
+      } else {
+        hideFieldError(emailInput, emailError);
+      }
+
+      // Validate comment
+      if (!review) {
+        showFieldError(
+          commentTextarea,
+          commentError,
+          'Please enter your comment'
+        );
+        hasErrors = true;
+      } else {
+        hideFieldError(commentTextarea, commentError);
+      }
+
+      // Stop if there are errors
+      if (hasErrors) {
         return;
       }
 
       // Відправка рейтингу на сервер
       if (currentExerciseIdForRating) {
+        // Clear previous server messages
+        hideServerMessage();
+
         fetch(
           `https://your-energy.b.goit.study/api/exercises/${currentExerciseIdForRating}/rating`,
           {
@@ -178,23 +313,30 @@ export function initRatingModal() {
             }),
           }
         )
-          .then(response => {
+          .then(async response => {
+            const data = await response.json();
+
             if (!response.ok) {
-              throw new Error('Failed to submit rating');
+              // Get error message from server or use default
+              throw { message: data.message, data };
             }
-            return response.json();
+
+            return data;
           })
           .then(data => {
-            console.log('Rating submitted:', data);
-            alert('Thank you for your rating!');
             closeRatingModal();
+            const exerciseName = data.name || 'the exercise';
+            showGlobalNotification(
+              `Thank you, your review for exercise ${exerciseName} has been submitted`,
+              'success'
+            );
           })
           .catch(error => {
-            console.error('Error submitting rating:', error);
-            alert('Failed to submit rating. Please try again.');
+            const errorMessage =
+              error.message || 'Failed to submit rating. Please try again.';
+            showServerMessage(errorMessage, 'error');
           });
       }
     });
   }
 }
-

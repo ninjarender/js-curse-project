@@ -75,6 +75,71 @@
     margin: 0;
   }
 
+  &__server-message {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    font-family: var(--font-family);
+    font-size: 14px;
+    font-weight: 400;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: 12px;
+    margin-top: var(--spacing-sm);
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.3s ease, margin 0.3s ease;
+
+    &--visible {
+      opacity: 1;
+      max-height: 200px;
+      margin-bottom: var(--spacing-md);
+    }
+
+    &--error {
+      background-color: rgba(255, 77, 79, 0.15);
+      color: #ff4d4f;
+      border: 1px solid rgba(255, 77, 79, 0.3);
+    }
+
+    &--success {
+      background-color: rgba(82, 196, 26, 0.15);
+      color: #52c41a;
+      border: 1px solid rgba(82, 196, 26, 0.3);
+    }
+
+    &-text {
+      flex: 1;
+      line-height: 1.5;
+    }
+
+    &-close {
+      flex-shrink: 0;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: currentColor;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+
+      &:hover {
+        opacity: 1;
+      }
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
   &__rating {
     display: flex;
     align-items: center;
@@ -135,6 +200,32 @@
     gap: var(--spacing-md);
   }
 
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__error,
+  &__rating-error {
+    font-family: var(--font-family);
+    font-size: 14px;
+    color: #ff4d4f;
+    min-height: 20px;
+    padding-left: var(--spacing-lg);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+
+    &.form-error--visible {
+      opacity: 1;
+    }
+  }
+
+  &__rating-error {
+    text-align: center;
+    padding-left: 0;
+  }
+
   &__input,
   &__textarea {
     font-family: var(--font-family);
@@ -155,12 +246,28 @@
     &:focus {
       border-color: rgba(255, 255, 255, 0.6);
     }
+
+    &--error {
+      border-color: #ff4d4f;
+
+      &:focus {
+        border-color: #ff4d4f;
+      }
+    }
   }
 
   &__textarea {
     border-radius: 20px;
     resize: vertical;
     min-height: 100px;
+
+    &--error {
+      border-color: #ff4d4f;
+
+      &:focus {
+        border-color: #ff4d4f;
+      }
+    }
   }
 
   &__submit {

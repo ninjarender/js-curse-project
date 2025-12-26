@@ -11,6 +11,15 @@
     <div class="rating-modal__body">
       <h2 class="rating-modal__title">Rating</h2>
 
+      <div class="rating-modal__server-message" id="js-rating-server-message">
+        <span class="rating-modal__server-message-text" id="js-rating-server-message-text"></span>
+        <button class="rating-modal__server-message-close" id="js-rating-server-message-close" aria-label="Close message">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+      </div>
+
       <div class="rating-modal__rating">
         <span class="rating-modal__rating-value" id="js-rating-modal-value">0.0</span>
         <div class="rating-modal__rating-stars" id="js-rating-modal-stars">
@@ -48,10 +57,20 @@
       </div>
 
       <form class="rating-modal__form" id="js-rating-modal-form">
-        <input type="email" class="rating-modal__input" id="js-rating-modal-email" placeholder="Email" required>
+        <div class="rating-modal__field">
+          <div class="rating-modal__rating-error" id="js-rating-error"></div>
+        </div>
 
-        <textarea class="rating-modal__textarea" id="js-rating-modal-comment" placeholder="Your comment"
-          rows="4"></textarea>
+        <div class="rating-modal__field">
+          <input type="email" class="rating-modal__input" id="js-rating-modal-email" placeholder="Email">
+          <div class="rating-modal__error" id="js-email-error"></div>
+        </div>
+
+        <div class="rating-modal__field">
+          <textarea class="rating-modal__textarea" id="js-rating-modal-comment" placeholder="Your comment"
+            rows="4"></textarea>
+          <div class="rating-modal__error" id="js-comment-error"></div>
+        </div>
 
         <button type="submit" class="rating-modal__submit">
           Send
