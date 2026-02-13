@@ -54,16 +54,18 @@ export async function displayQuote() {
     return;
   }
 
-  const quoteTextElement = document.getElementById('js-exercises-quote-text');
-  const quoteAuthorElement = document.getElementById(
-    'js-exercises-quote-author'
-  );
+  ['mobile', 'desktop'].forEach(device => {
+    const quoteTextElement = document.getElementById(`js-exercises-quote-text-${device}`);
+      const quoteAuthorElement = document.getElementById(
+        `js-exercises-quote-author-${device}`
+      );
+    
+    if (quoteTextElement) {
+      quoteTextElement.textContent = quoteData.quote;
+    }
 
-  if (quoteTextElement) {
-    quoteTextElement.textContent = quoteData.quote;
-  }
-
-  if (quoteAuthorElement) {
-    quoteAuthorElement.textContent = quoteData.author;
-  }
+    if (quoteAuthorElement) {
+      quoteAuthorElement.textContent = quoteData.author;
+    }
+  });
 }

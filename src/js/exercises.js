@@ -67,7 +67,7 @@ export function initCardsEventListener() {
 // Функція для створення HTML картки категорії
 function createExerciseCard(exercise) {
   return `
-    <div class="exercises__content__main__cards-item" data-category-name="${exercise.name}">
+    <li class="exercises__content__main__cards-item" data-category-name="${exercise.name}">
       <div class="exercises__content__main__cards-item-image">
         <img src="${exercise.imgURL}" alt="${exercise.name} exercise" />
         <div class="exercises__content__main__cards-item-overlay">
@@ -75,7 +75,7 @@ function createExerciseCard(exercise) {
           <div class="exercises__content__main__cards-item-overlay-category">${exercise.filter}</div>
         </div>
       </div>
-    </div>
+    </li>
   `;
 }
 
@@ -89,7 +89,7 @@ function createExerciseItemCard(exercise) {
   const exerciseId = exercise._id || '';
 
   return `
-    <div class="exercises__content__main__cards-item exercises__content__main__cards-item--exercise" data-exercise-id="${exerciseId}">
+    <li class="exercises__content__main__cards-item exercises__content__main__cards-item--exercise" data-exercise-id="${exerciseId}">
       <div class="exercises__content__main__cards-item-header">
         <button class="exercises__content__main__cards-item-workout-btn">WORKOUT</button>
         <div class="exercises__content__main__cards-item-rating">
@@ -134,7 +134,7 @@ function createExerciseItemCard(exercise) {
           <span class="exercises__content__main__cards-item-info-value">${target}</span>
         </div>
       </div>
-    </div>
+    </li>
   `;
 }
 
@@ -228,7 +228,7 @@ export function updateBreadcrumbs(categoryName = null) {
   if (currentMode === 'favorites') {
     const favoritesTitle = document.createElement('button');
     favoritesTitle.className =
-      'exercises__content__header-breadcrumbs-item exercises__content__header-breadcrumbs-item--active';
+      'exercises__content__header-top-breadcrumbs-item exercises__content__header-top-breadcrumbs-item--active';
     favoritesTitle.textContent = 'Favorites';
     favoritesTitle.setAttribute('data-breadcrumb', 'favorites');
     breadcrumbsContainer.appendChild(favoritesTitle);
@@ -237,13 +237,13 @@ export function updateBreadcrumbs(categoryName = null) {
 
   // Завжди додаємо "Exercises"
   const exercisesBtn = document.createElement('button');
-  exercisesBtn.className = 'exercises__content__header-breadcrumbs-item';
+  exercisesBtn.className = 'exercises__content__header-top-breadcrumbs-item';
   exercisesBtn.textContent = 'Exercises';
   exercisesBtn.setAttribute('data-breadcrumb', 'exercises');
 
   if (!categoryName) {
     exercisesBtn.classList.add(
-      'exercises__content__header-breadcrumbs-item--active'
+      'exercises__content__header-top-breadcrumbs-item--active'
     );
   }
 
@@ -264,7 +264,7 @@ export function updateBreadcrumbs(categoryName = null) {
 
     const categoryBtn = document.createElement('button');
     categoryBtn.className =
-      'exercises__content__header-breadcrumbs-item exercises__content__header-breadcrumbs-item--active';
+      'exercises__content__header-top-breadcrumbs-item exercises__content__header-top-breadcrumbs-item--active';
     categoryBtn.textContent = categoryName;
     breadcrumbsContainer.appendChild(categoryBtn);
   }

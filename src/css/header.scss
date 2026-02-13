@@ -1,15 +1,24 @@
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-lg) var(--spacing-xl);
+  &__container {
+    display: flex;
+    margin-top: var(--spacing-lg);
+    margin-bottom: 80px;
+    justify-content: space-between;
+    align-items: center;
 
-  &__logo {
-    background-color: var(--color-block-light);
+    @media (min-width: 768px) {
+      margin-top: 24px;
+      margin-bottom: 100px;
+    }
+
+    @media (min-width: 1440px) {
+      margin-top: 42px;
+      margin-bottom: 110px;
+    }
   }
 
   &__nav {
-    width: 265px;
+    // width: 265px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -65,7 +74,7 @@
     border: none;
     cursor: pointer;
     padding: 0;
-    z-index: 1001;
+    z-index: 999;
 
     span {
       display: block;
@@ -77,10 +86,7 @@
     }
   }
 
-  // Mobile styles
-  @media (max-width: 768px) {
-    padding: var(--spacing-md) var(--spacing-lg);
-
+  @media (max-width: 767px) {
     &__nav {
       display: none;
     }
@@ -100,7 +106,7 @@
   position: fixed;
   top: 0;
   right: -100%;
-  width: 200px;
+  width: 210px;
   height: 100vh;
   background-color: var(--color-dark);
   z-index: 1000;
@@ -119,7 +125,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: var(--spacing-xl) var(--spacing-lg);
+    padding: var(--spacing-lg);
   }
 
   &__close {
@@ -131,8 +137,8 @@
     color: var(--color-light);
     cursor: pointer;
     padding: 0;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -141,7 +147,7 @@
   &__nav {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--spacing-lg);
     margin-top: 60px;
     margin-bottom: auto;
 
@@ -170,8 +176,8 @@
 
   &__socials {
     display: flex;
-    gap: 12px;
-    margin-top: auto;
+    gap: 6px;
+    justify-content: center;
 
     &-link {
       display: flex;
@@ -181,8 +187,8 @@
       height: 44px;
       
       img {
-        width: 24px;
-        height: 24px;
+        width: 28px;
+        height: 28px;
       }
     }
   }

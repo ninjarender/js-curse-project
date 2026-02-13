@@ -11,56 +11,56 @@
   }
 
   &__header {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+
+    @media (min-width: 1440px) {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--spacing-md);
+    }
 
     &-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-    }
+      margin-bottom: var(--spacing-lg);
 
-    &-title {
-      font-size: 44px;
-      font-weight: 400;
-      color: var(--color-dark);
-      margin-block: 0;
-    }
+      &-breadcrumbs {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
 
-    &-breadcrumbs {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-sm);
+        &-item {
+          font-family: var(--font-family);
+          font-size: 28px;
+          font-weight: 400;
+          color: var(--color-dark);
+          opacity: 0.6;
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          transition: opacity 0.2s ease;
 
-      &-item {
-        font-family: var(--font-family);
-        font-size: 14px;
-        font-weight: 400;
-        color: var(--color-dark);
-        opacity: 0.6;
-        background: none;
-        border: none;
-        padding: 0;
-        cursor: pointer;
-        transition: opacity 0.2s ease;
+          @media (max-width: 768px) {
+            font-size: 44px;
+          }
 
-        &:hover {
-          opacity: 1;
+          &:hover {
+            opacity: 1;
+          }
+
+          &--active {
+            opacity: 1;
+          }
         }
 
-        &--active {
-          opacity: 1;
-          font-weight: 500;
+        &-separator {
+          font-family: var(--font-family);
+          font-size: 14px;
+          color: var(--color-dark);
+          opacity: 0.6;
         }
-      }
-
-      &-separator {
-        font-family: var(--font-family);
-        font-size: 14px;
-        color: var(--color-dark);
-        opacity: 0.6;
       }
     }
 
@@ -108,8 +108,9 @@
 
       &-item {
         font-family: var(--font-family);
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 400;
+        line-height: 143%;
         color: var(--color-dark);
         opacity: 0.6;
         background: none;
@@ -136,16 +137,44 @@
   }
 
   &__main {
-    display: flex;
+    display: block;
     gap: var(--spacing-xl);
 
-    &__aside {
+    @media (min-width: 1440px) {
       display: flex;
+    }
+
+    &__aside {
       flex-direction: column;
       gap: var(--spacing-lg);
-      min-width: 444px;
-      max-width: 444px;
-      flex: 1;
+
+      &--mobile {
+        display: flex;
+        margin-bottom: 80px;
+
+        @media (min-width: 768px) {
+          display: grid;
+          grid-template-columns: 400px 1fr;
+          margin-bottom: 100px;
+        }
+
+        @media (min-width: 1439px) {
+          display: none;
+          margin-bottom: 0;
+        }
+      }
+
+      &--desktop {
+        display: none;
+
+        @media (min-width: 1440px) {
+          display: flex;
+          gap: var(--spacing-xl);
+          min-width: 444px;
+          max-width: 444px;
+          flex: 1;
+        }
+      }
 
       &__quote {
         display: flex;
@@ -162,6 +191,7 @@
           gap: var(--spacing-sm);
           color: var(--color-light);
           justify-content: space-between;
+          margin-bottom: var(--spacing-lg);
 
           &-text {
             font-size: 24px;
@@ -171,11 +201,17 @@
 
         &-text {
           opacity: 0.6;
+          margin-bottom: var(--spacing-lg);
         }
       }
 
       &__image {
         border-radius: 20px;
+
+        @media (min-width: 768px) and (max-width: 1439px) {
+          width: 100%;
+          height: 100%;
+        }
       }
 
       &__norm {
@@ -186,6 +222,10 @@
         padding: var(--spacing-lg);
         border-radius: 20px;
         color: var(--color-dark);
+
+        @media (min-width: 768px) {
+          grid-column: 1;
+        }
 
         &-context {
           &-title {
@@ -208,13 +248,26 @@
     &__cards {
       &-container {
         width: 100%;
+        margin-bottom: 80px;
+
+        @media (min-width: 768px) {
+          margin-bottom: 64px;
+        }
+
+        @media (min-width: 1440px) {
+          margin-bottom: 132px;
+        }
       }
 
       width: 100%;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(1, 1fr);
       gap: var(--spacing-lg);
       margin-bottom: var(--spacing-xl);
+
+      @media (min-width: 768px) {
+        grid-template-columns: repeat(3, 1fr);
+      }
 
       &--exercises {
         grid-template-columns: repeat(2, 1fr);
@@ -225,7 +278,9 @@
         border-radius: 20px;
         overflow: hidden;
         aspect-ratio: 1;
-        cursor: pointer;      
+        cursor: pointer;
+        width: 100%;      
+        height: 225px;
       
         &-image {
           position: relative;
