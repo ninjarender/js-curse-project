@@ -30,9 +30,11 @@
     border-radius: 20px;
     max-width: 500px;
     width: 100%;
+    max-height: calc(100vh - 2 * var(--spacing-xl));
     z-index: 2001;
     padding: var(--spacing-xl);
     padding-top: calc(var(--spacing-xl) + 44px + var(--spacing-lg));
+    overflow-y: auto;
   }
 
   &__close {
@@ -44,7 +46,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
+    background: rgba(36, 36, 36, 0.95);
     border: none;
     color: var(--color-light);
     cursor: pointer;

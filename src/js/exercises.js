@@ -41,6 +41,22 @@ export function initCardsEventListener() {
 
   // Один слухач на весь контейнер замість багатьох на кожній картці
   cardsContainer.addEventListener('click', event => {
+    // Перевіряємо, чи клік був на кнопці "Start" або її дочірніх елементах
+    const startButton = event.target.closest(
+      '.exercises__content__main__cards-item-start-btn'
+    );
+
+    if (startButton) {
+      // Знаходимо картку вправи, щоб отримати exerciseId
+      const card = startButton.closest('.exercises__content__main__cards-item');
+      const exerciseId = card?.getAttribute('data-exercise-id');
+
+      if (exerciseId) {
+        openExerciseModal(exerciseId);
+      }
+      return;
+    }
+
     // Знаходимо найближчу картку від місця кліку
     const card = event.target.closest('.exercises__content__main__cards-item');
 
@@ -52,13 +68,6 @@ export function initCardsEventListener() {
     const categoryName = card.getAttribute('data-category-name');
     if (categoryName) {
       loadExercisesByCategory(categoryName);
-      return;
-    }
-
-    // Перевіряємо, чи це картка вправи
-    const exerciseId = card.getAttribute('data-exercise-id');
-    if (exerciseId) {
-      openExerciseModal(exerciseId);
       return;
     }
   });
